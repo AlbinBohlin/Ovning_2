@@ -56,28 +56,19 @@ internal class Program
                     {
                         Print("No charge for the very old and young.");
                     }
-                    else
+                    if (age < 20 || age > 64)
                     {
+                        if (age < 20) { Print("Youth fee: 80kr."); } 
+                        else { Print("Senior fee: 90kr."); }
+                    }                    
+                    else  { Print("Regular fee: 120kr."); }
+                   
 
-                        if (age >= 20)
-                        {
-                            if (age > 64)
-                            {
-                                Print("Senior fee: 90kr.");
-                            }
-                            else { Print("Regular fee: 120kr."); }
-
-                        }
-                        else { Print("Youth fee: 80kr."); }
-
-
-
-                    }
                     break;
-                case "2": break;
+                case "2":
 
 
-                        default: Console.WriteLine(curious + "\nInvalid input.\n"); break;
+                default: Console.WriteLine(curious + "\nInvalid input.\n"); break;
             }
         }
         while (true);
