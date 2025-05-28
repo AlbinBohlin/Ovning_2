@@ -6,8 +6,13 @@ internal class Program
     //an object if possible, otherwise its the same drab Object.tostring as Console.Writeline would produce.
     public static void Print(Object s) { Printmaster.Printr.Print(s); }
 
-    public enum Expected {Choiche, Byte, String, Repeat } //For input validation and switch fidelity
+    public enum Types { Choiche, Age, Tickets, Byte, String } //For input validation and switch fidelity
 
+    public struct Response(Object data, Types dataType)
+    {
+        public Object Data { get; } = data;
+        public Types DataType { get; } = dataType;
+    }
 
     /*
      * A Prompt is an encouragement to provide input.
@@ -15,80 +20,74 @@ internal class Program
      * @expected_type - a typesafe declaration of acceptable user input.
      * @Return A validated response for all instructions
      */
-    public static string[] Prompt(string instruction, Expected expected_type)
+    public static Response Prompt(string instruction, Types expected_type)
     {
         Console.WriteLine(instruction);
         string? response;
         do response = Console.ReadLine(); while (string.IsNullOrWhiteSpace(response)); //Input validation not empty (string null only if terminal process killed with ctrl + c)
 
-        if (expected_type == Expected.Byte || expected_type == Expected.Choiche) // If we asked user for an number. I.e. menu choice or age. *expect.equals(typeof( === false?!!?*
+        if (expected_type != Types.String) // If we asked user for an number. I.e. menu choice or age. 
         {
             try
             {
-                var expected = System.Byte.Parse(response.Trim().Split(" ")[0]); // First word as an Byte if eligable
-                return [$"{expected}",expected_type.ToString()];//Conform to method return type.
+                return new Response(System.Byte.Parse(response.Trim().Split(" ")[0]), expected_type); // First word as an Byte if eligable
             }
             catch (OverflowException) { Print("Thats a big number, too big."); Prompt(instruction, expected_type); }//retry
             catch (FormatException) { Print("Only whole positive numbers please"); Prompt(instruction, expected_type); }
             catch (Exception e) { Print($"If this message prints i missed something...\n{e.Message}"); Prompt(instruction, expected_type); }
         }
-        else if (expected_type == Expected.Repeat) return ["1"]; // Repeat menu 1
-        
-            Print("Not implemented yet"); Prompt(instruction, expected_type);
-        return [response];
+
+
+        Print("Not implemented yet"); Prompt(instruction, expected_type);
+        return new Response("dfs", Types.String);
     }
 
     public static void Main(string[] args)
     {
-        var menu = new string[] { "0: Quit", "1: Request 1 ticket", "2: Request several tickets" };
-        int repeat = 1; 
-        int totalFee = 0;
-        string[] response = ["",];
+        int[] total = { 0, 0 };// Number of tickets and total cost
         //Main menu
+        var menu = new string[] { "0: Quit", "1: Purchase tickets", "2: " };
         Print("Welcome to Excersice 2. Options below.");
+
         do
         {
-            if (repeat <= 1)
-            {
-                totalFee = 0;
-                repeat = 1;
-                foreach (var option in menu) Print(option);
-                // Convoluted by design.. Byte becasue neither age nor menuchoice should be negative or more than 8 bits
-                response = Prompt($"Please enter a number between 0 and {menu.Length - 1}.", Expected.Choiche);
-            }
 
-            switch (response[0])
-            {      
+        foreach (var option in menu) Print(option);
+        Response response = Prompt("Choose option and press enter.", Types.Choiche);
+
+            switch ((Byte)response.Data)
+            {
                 //Main loop is void. return breaks the while.
-                case "0": Print("Goodbye"); return;
-                    // Single customer pricing model
-                case "1":
-                    //Expected responseType = response[1] == Expected.Repeat.ToString() ? Expected.Repeat : Expected.Byte;
-                    do
+                case 0: Print("Goodbye"); return;
+                // Purchase tickets
+                case 1:
+                    response = Prompt("Please enter the number of tickets", Types.Tickets);
+                    for (Byte i = (Byte)response.Data; i > 0; i--)
                     {
-                        int age = int.Parse(Prompt("Please enter your age in whole years", Expected.Byte)[0]);
+                        response = Prompt("Please enter your age in whole years", Types.Age);
+                        byte age = (Byte)response.Data;
                         if (age < 5 || age > 100)
                         {
                             Print("No fee: 0kr.");
                         }
                         else if (age < 20 || age > 64)
                         {
-                            if (age < 20) { Print("Youth fee: 80kr."); totalFee += 80; }
-                            else { Print("Senior fee: 90kr."); totalFee += 90; }
+                            if (age < 20) { Print("Youth fee: 80kr."); total[0]++; total[1] += 80; }
+                            else { Print("Senior fee: 90kr."); total[0]++; total[1] += 90; }
                         }
-                        else { Print("Regular fee: 120kr."); totalFee += 120; }
-                        repeat--;
-                    }while (repeat > 0);//not how i want it
-                    Print($"Total fee: {totalFee}kr. \n");
+                        else { Print("Regular fee: 120kr."); total[0]++; total[1] += 120; }
+                    }
 
-                        break;
-
-                    //Several cusomers will repeat case 1  
-                case "2":
-                    
-                    repeat = int.Parse(Prompt($"Please enter number of people.", Expected.Byte)[0]); //set repititions 
-                    response[0] = "1"; //Quickfix
+                    Print($"Total tickets: {total[0]}, Total fee: {total[1]}kr. \nReturning to main menu..\n");
                     break;
+
+                case 2:
+
+
+                    break;
+
+                case 3:
+
 
 
                 default: Console.WriteLine("This should never happen" + "\nInvalid input.\n"); break;
