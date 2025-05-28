@@ -36,7 +36,7 @@ switch (Prompt(...)[0])
     // ...
     default: Console.WriteLine("Invalid input"); // No access to input here
 }
-You’d lose the ability to print the user’s bad input.
+You’d lose the ability to Console.WriteLine the user’s bad input.
 
 So yes — you're right: assigning inside the switch lets you reuse the input string later. Nice catch!
 
@@ -82,8 +82,8 @@ curious = Prompt("Please enter a number...", typeof(byte))[0];
 
 switch (curious)
 {
-    case "0": running = false; Print("Goodbye"); break;
-    case "1": Print("Testing"); break;
+    case "0": running = false; Console.WriteLine("Goodbye"); break;
+    case "1": Console.WriteLine("Testing"); break;
     default: Console.WriteLine($"{curious}\nInvalid input."); break;
 }
 This improves readability while keeping functionality the same.
@@ -116,7 +116,7 @@ Let me know if you want help refactoring, expanding functionality, or testing ed
 
 
 You said:
-if i remove var curious, can i still somehow print the return value from Promt in default?
+if i remove var curious, can i still somehow Console.WriteLine the return value from Promt in default?
 
 
 ChatGPT said:
@@ -319,8 +319,8 @@ curious = Prompt("Please enter a number...", typeof(byte))[0];
 
 switch (curious)
 {
-    case "0": running = false; Print("Goodbye"); break;
-    case "1": Print("Testing"); break;
+    case "0": running = false; Console.WriteLine("Goodbye"); break;
+    case "1": Console.WriteLine("Testing"); break;
     default: Console.WriteLine($"{curious}\nInvalid input."); break;
 }
 This improves readability while keeping functionality the same.
